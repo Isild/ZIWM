@@ -43,57 +43,13 @@ def main():
     #load_data()
 
 def load_data():
-    #dataframe = pandas.read_excel('ANEMIA.xls')
-    #array = dataframe.values
-    #print("dane z pliku:\n", array)
-    #x = array[:, 2:33]  # features columns; od:do kolumny
-    #y = array[:, 0]  # class column; kolumna 0 jako nr klas
-    #class_nr = 1.0
-    #for it, i in enumerate(y):  # fill empty cells with the class number
-        #if np.isnan(i):
-            #y[it] = class_nr
-        #else:
-            #class_nr = i
-    #print("anemia:\n", x, y.astype(np.int))
-    #return x, y.astype(np.int)
-    #print("to co z xls:")
-    #print("dane liczbowe:\n",x) 
-    #print("kolumna klas\n",y.astype(np.int))
-    #print(x, y.astype(np.int))
-    
-    #dataframe = pandas.read_csv('ang_prect.txt', sep="	", header=None)
-    #dataframe = pandas.read_table('ang_prect.txt')
-    #print(dataframe)
-    #print(len(dataframe[0]))
-    #print(len(dataframe))
-    #df1 = pandas.DataFrame(data=dataframe)
-    #print(dataframe.T)
-    #d = dataframe.T
-    #print(len(d))
-    #cC = []
-    #for i in range(1, len(d)+1):
-        #cC.append(i)
-    #print(cC)
-
-    #d.insert(loc=0, column=-1, value=cC)
-    #print(d)
-    
-    #nasze:
-    #array = d
-    #print("dane z pliku:\n", array)
-    #d1 = d.to_numpy()
-    #print(type(d1), "\n\n")
-    #x = d1[:, 1:60]  # features columns; od:do kolumny
-    #y = d1[:, 0]  # class column; kolumna 0 jako nr klas
-    #class_nr = 1.0
-    #print(x, y.astype(np.int))
-    #return x, y.astype(np.int)
     fileNames = ['ang_prct_2.txt', 'ang_prect.txt', 'inne.txt', 'mi_np.txt', 'mi.txt']
     
     fiX = []
     fiY = []
     classNumber=1
     
+    #pierwsze wczytanie danych z pliku, nie jest to w pętli, ponieważ był problem ze sklejaniem danych o różnych wymiarach, a nie wiem jak zrobić pustą tabele o konkretnych wymiarach
     dataframeX = pandas.read_csv('ang_prct_2.txt', sep="	", header=None)
     print("Wczytane dane:\n", dataframeX)
     dataframeX=dataframeX.T
@@ -105,6 +61,7 @@ def load_data():
     number = []
     d1 = []
     
+    #kolumna z numerami
     for i in range(1, len(dataframeX)+1):
         cC.append(i)
         number.append(classNumber)
@@ -112,7 +69,6 @@ def load_data():
     dataframeX.insert(loc=0, column=-1, value=cC)
     print("Tablica z dodanym ponumerowaniem pacjentów:\n", dataframeX)
     dataframeX.insert(loc=0, column=-2, value=number)
-    
     
     
     for f in fileNames:
@@ -132,6 +88,7 @@ def load_data():
             cC.append(i)
             number.append(classNumber)
         #print(cC)
+        #wstawiam nową kolumnę z numerami, żeby format wporwadzonych danych się zgadzał
         dataframe.insert(loc=0, column=-1, value=cC)
         #print("Tablica z dodanym ponumerowaniem pacjentów:\n", dataframe)
         dataframe.insert(loc=0, column=-2, value=number)
@@ -139,27 +96,12 @@ def load_data():
         d1 = dataframe.to_numpy()
         x = d1[:, 2:60]  # features columns; od:do kolumny
         y = d1[:, 0]  # class column; kolumna 0 jako nr klas
-        #if classNumber == 1:
-            #dataframe.to_excel("output.xlsx", index=False) 
-            #dataframe.to_excel(writer, startrow=1 , startcol=0)
-        #else :
-            #dataframe.to_excel("output.xlsx", index=False, header=False,startrow=0 , startcol=0)
-            #dataframe.to_excel(writer, startrow=70, startcol=0)
-            
-        #if len(fiX) == 0:
-            #fiX = d1[:, 2:60]
-            #fiY = d1[:, 0]
-        #else :
-            #fiX = np.concatenate([fiX,x])
-            #fiX = np.concatenate([fiY,y])
-            
+
         if classNumber != 1:
+            #sklejam ze sobą kolejne dane z pliku
             dataframeX=dataframeX.append(dataframe, ignore_index=True)
             
-        #print("x i y:\n", fiX, fiY)
         classNumber+=1
-        #dataframeZ = pandas.DataFrame.copy()
-        #dataframeZ = dataframe.copy()
     
     print(dataframeX)
     d1 = dataframeX.to_numpy()
@@ -168,29 +110,6 @@ def load_data():
     print(x, y)
     dataframeX.to_excel("output.xlsx", index=False) 
     return x, y.astype(np.int)
-    #########################################
-    
-    #dataframe = pandas.read_csv('ang_prect.txt', sep="	", header=None)
-    #print("Wczytane dane:\n", dataframe)
-    #dataframe=dataframe.T
-    #print("Obrócone dane:\n", dataframe)
-    
-    #cC = []
-    #classNumber=1
-    #number = []
-    #for i in range(1, len(dataframe)+1):
-        #cC.append(i)
-        #number.append(classNumber)
-    #print(cC)
-    #dataframe.insert(loc=0, column=-1, value=cC)
-    #print("Tablica z dodanym ponumerowaniem pacjentów:\n", dataframe)
-    #dataframe.insert(loc=0, column=-2, value=number)
-    #print("Tablica z dodanym numerem klasy:\n", dataframe)
-    #d1 = dataframe.to_numpy()
-    #x = d1[:, 2:60]  # features columns; od:do kolumny
-    #y = d1[:, 0]  # class column; kolumna 0 jako nr klas
-    #print(len(np.concatenate([x,x])))
-    #print("x i y:\n", x, y)
 
 
 def feature_selection(x, y, n_best=59):
