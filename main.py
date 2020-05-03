@@ -24,21 +24,21 @@ def main():
         for row_num, data in enumerate(new_list):
             worksheet.write_row(row_num, 0, data)
 
-    # layer_widths = [500, 900, 1200]
-    # momentum = [False, True]
-    # for width in layer_widths:
-        # print("Hidden layer width: " + str(width))
-        # for m in momentum:
-            # print("Momentum: " + str(m))
-            # train_evaluate(x, y, width, m)
-    # print("\n\n\nSUMMARY\n------------------------------------------\n")
-    # print("Hidden layer width: " + str(best_conf_matrix[0]) + "\nMomentum: " +
-          # str(best_conf_matrix[1]) + "\nFeatures number: " + str(best_conf_matrix[2]))
-    # print("Confusion matrix: ")
-    # print(best_conf_matrix[3])
-    # print("\nScore: " + str(best_conf_matrix[4]))
+    layer_widths = [500, 900, 1200]
+    momentum = [False, True]
+    for width in layer_widths:
+        print("Hidden layer width: " + str(width))
+        for m in momentum:
+            print("Momentum: " + str(m))
+            train_evaluate(x, y, width, m)
+    print("\n\n\nSUMMARY\n------------------------------------------\n")
+    print("Hidden layer width: " + str(best_conf_matrix[0]) + "\nMomentum: " +
+          str(best_conf_matrix[1]) + "\nFeatures number: " + str(best_conf_matrix[2]))
+    print("Confusion matrix: ")
+    print(best_conf_matrix[3])
+    print("\nScore: " + str(best_conf_matrix[4]))
 
-    # load_data()
+    load_data()
 
 def load_data():
     fileNames = ['ang_prct_2.txt', 'ang_prect.txt', 'inne.txt',
