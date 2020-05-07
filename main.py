@@ -1,5 +1,6 @@
 import xlsxwriter
 import pandas
+import sys
 import numpy as np
 import sklearn.feature_selection as feat_select
 from sklearn.metrics import confusion_matrix
@@ -12,6 +13,9 @@ def main():
     x, y = load_data()
     result = feature_selection(x, y)
     new_list = result[1]
+    max_features = int(sys.argv[1])
+    if (max_features > 59 or max_features < 1):
+        raise ValueError("Must check for at least one feature and max 59")
 
     with xlsxwriter.Workbook('ranking.xlsx') as workbook:
         worksheet = workbook.add_worksheet()
@@ -24,7 +28,7 @@ def main():
         print("Hidden layer width: " + str(width))
         for m in momentum:
             print("Momentum: " + str(m))
-            train_evaluate(x, y, width, m)
+            train_evaluate(x, y, width, m, max_features)
     print("\n\n\nSUMMARY\n------------------------------------------\n")
     print("Hidden layer width: " + str(best_conf_matrix[0]) + "\nMomentum: " +
           str(best_conf_matrix[1]) + "\nFeatures number: " + str(best_conf_matrix[2]))
@@ -110,8 +114,9 @@ def feature_selection(x, y, n_best=59):
     print("Selected", len(scores), "features")
     return fit_x, scores
 
-def train_evaluate(x, y, hidden_layer_width=900, momentum=True):
-    for i in range(1, 60):				# 59 best features
+def train_evaluate(x, y, hidden_layer_width=900, momentum=True, max_features=59):
+    # test first 1, 2 ... 'max_features' best features
+    for i in range(1, max_features + 1):
         global best_conf_matrix
         fit_x, _ = feature_selection(x, y, i)
         kf = RepeatedStratifiedKFold(2, 5, random_state=42)	# 5x2cv
