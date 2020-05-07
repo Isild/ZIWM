@@ -29,12 +29,12 @@ def main():
         for m in momentum:
             print("Momentum: " + str(m))
             train_evaluate(x, y, width, m, max_features)
-    print("\n\n\nSUMMARY\n------------------------------------------\n")
+    print("SUMMARY\n------------------------------------------")
     print("Hidden layer width: " + str(best_conf_matrix[0]) + "\nMomentum: " +
           str(best_conf_matrix[1]) + "\nFeatures number: " + str(best_conf_matrix[2]))
     print("Confusion matrix: ")
     print(best_conf_matrix[3])
-    print("\nScore: " + str(best_conf_matrix[4]))
+    print("Score: " + str(best_conf_matrix[4]))
 
 def load_data():
     fileNames = ['ang_prct_2.txt', 'ang_prect.txt', 'inne.txt',
@@ -147,7 +147,6 @@ def train_evaluate(x, y, hidden_layer_width=900, momentum=True, max_features=59)
 
         print("Mean score for feature: " + str(i) +
               " " + str(np.mean(val_acc_features)) + "\n")
-
 
 if __name__ == "__main__":
     main()
