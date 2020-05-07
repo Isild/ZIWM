@@ -120,7 +120,7 @@ def feature_selection(x, y, n_best=59):
     fit = selector.fit(x, y)
     fit_x = selector.transform(x)
     scores = []
-    for j in range(59):
+    for j in range(n_best):
         scores.append([j, fit.scores_[j]])
     scores = sorted(scores, key=lambda item: item[1], reverse=True)
     print("Score wew:", len(scores))
