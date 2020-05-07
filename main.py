@@ -13,12 +13,6 @@ def main():
     result = feature_selection(x, y)
     new_list = result[1]
 
-    print("dane:\n", x,y)
-    print("========================\n")
-    print((result[1]))
-    print("długości: ", len(x), len(y))
-    print("Score`;\n", len(new_list))
-
     with xlsxwriter.Workbook('ranking.xlsx') as workbook:
         worksheet = workbook.add_worksheet()
         for row_num, data in enumerate(new_list):
@@ -52,9 +46,7 @@ def load_data():
     # ponieważ był problem ze sklejaniem danych o różnych wymiarach,
     # a nie wiem jak zrobić pustą tabele o konkretnych wymiarach
     dataframeX = pandas.read_csv('ang_prct_2.txt', sep="	", header=None)
-    print("Wczytane dane:\n", dataframeX)
     dataframeX = dataframeX.T
-    print("Obrócone dane:\n", dataframeX)
 
     number = []
     cC = []
@@ -67,17 +59,14 @@ def load_data():
         cC.append(i)
         number.append(classNumber)
 
-    #print(cC)
     dataframeX.insert(loc=0, column=-1, value=cC)
-    print("Tablica z dodanym ponumerowaniem pacjentów:\n", dataframeX)
     dataframeX.insert(loc=0, column=-2, value=number)
 
+    print("Reading files:")
     for f in fileNames:
-        print("Plik: ", f)
+        print("	", f)
         dataframe = pandas.read_csv(f, sep="	", header=None)
-        #print("Wczytane dane:\n", dataframe)
         dataframe=dataframe.T
-        #print("Obrócone dane:\n", dataframe)
 
         number = []
         cC = []
@@ -89,13 +78,10 @@ def load_data():
             cC.append(i)
             number.append(classNumber)
 
-        #print(cC)
         # wstawiam nową kolumnę z numerami,
         # żeby format wporwadzonych danych się zgadzał
         dataframe.insert(loc=0, column=-1, value=cC)
-        #print("Tablica z dodanym ponumerowaniem pacjentów:\n", dataframe)
         dataframe.insert(loc=0, column=-2, value=number)
-        #print("Tablica z dodanym numerem klasy:\n", dataframe)
         d1 = dataframe.to_numpy()
         x = d1[:, 2:60]  # features columns; od:do kolumny
         y = d1[:, 0]  # class column; kolumna 0 jako nr klas
@@ -106,16 +92,16 @@ def load_data():
 
         classNumber+=1
 
-    print(dataframeX)
+    print("\n", dataframeX, "\n")
+
     d1 = dataframeX.to_numpy()
     x = d1[:, 2:61]	# features columns; od:do kolumny
     y = d1[:, 0]	# class column; kolumna 0 jako nr klas
-    print(x, y)
+
     dataframeX.to_excel("output.xlsx", index=False)
     return x, y.astype(np.int)
 
 def feature_selection(x, y, n_best=59):
-    print("dl x:", (x), ", y:", (y))
     selector = feat_select.SelectKBest(score_func=feat_select.chi2, k=n_best)
     fit = selector.fit(x, y)
     fit_x = selector.transform(x)
@@ -123,7 +109,7 @@ def feature_selection(x, y, n_best=59):
     for j in range(n_best):
         scores.append([j, fit.scores_[j]])
     scores = sorted(scores, key=lambda item: item[1], reverse=True)
-    print("Score wew:", len(scores))
+    print("Selected", len(scores), "features")
     return fit_x, scores
 
 def train_evaluate(x, y, hidden_layer_width=900, momentum=True):
@@ -157,7 +143,7 @@ def train_evaluate(x, y, hidden_layer_width=900, momentum=True):
             val_acc_features.append(s)
 
         print("Mean score for feature: " + str(i) +
-              " " + str(np.mean(val_acc_features)))
+              " " + str(np.mean(val_acc_features)) + "\n")
 
 
 if __name__ == "__main__":
