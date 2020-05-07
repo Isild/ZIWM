@@ -138,7 +138,8 @@ def train_evaluate(x, y, hidden_layer_width=900, momentum=True):
         else:
             mlp = MLPClassifier(hidden_layer_sizes=(hidden_layer_width,),
                                 max_iter=1000, solver='sgd', verbose=False,
-                                                 momentum=0, random_state=1)
+                                nesterovs_momentum=False, momentum=0,
+                                random_state=1)
 
         val_acc_features = []
 
