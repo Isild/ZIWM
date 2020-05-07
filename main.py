@@ -127,10 +127,10 @@ def feature_selection(x, y, n_best=59):
     return fit_x, scores
 
 def train_evaluate(x, y, hidden_layer_width=900, momentum=True):
-    for i in range(1, 8):	# 7 best features
+    for i in range(1, 60):				# 59 best features
         global best_conf_matrix
         fit_x, _ = feature_selection(x, y, i)
-        kf = RepeatedStratifiedKFold(2, 5, random_state=42)
+        kf = RepeatedStratifiedKFold(2, 5, random_state=42)	# 5x2cv
         if momentum:
             mlp = MLPClassifier(hidden_layer_sizes=(hidden_layer_width,),
                                 max_iter=1000, nesterovs_momentum=True,
