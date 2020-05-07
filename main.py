@@ -32,8 +32,6 @@ def main():
     print(best_conf_matrix[3])
     print("\nScore: " + str(best_conf_matrix[4]))
 
-    load_data()
-
 def load_data():
     fileNames = ['ang_prct_2.txt', 'ang_prect.txt', 'inne.txt',
                                          'mi_np.txt', 'mi.txt']
