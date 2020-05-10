@@ -27,7 +27,7 @@ def main():
         for row_num, data in enumerate(new_list):
             worksheet.write_row(row_num, 0, data)
 
-    layer_widths = [500, 900, 1200]
+    layer_widths = [10, 50, 100, 200, 500, 1000, 1500, 5000]
     momentum = [False, True]
     for width in layer_widths:
         print("Hidden layer width: " + str(width))
