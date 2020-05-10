@@ -2,6 +2,7 @@ import xlsxwriter
 import pandas
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 import sklearn.feature_selection as feat_select
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import RepeatedStratifiedKFold
@@ -116,6 +117,7 @@ def feature_selection(x, y, n_best=59):
 
 def train_evaluate(x, y, hidden_layer_width=900, momentum=True, max_features=59):
     # test first 1, 2 ... 'max_features' best features
+    scores = []
     for i in range(1, max_features + 1):
         global best_conf_matrix
         fit_x, _ = feature_selection(x, y, i)
@@ -143,10 +145,20 @@ def train_evaluate(x, y, hidden_layer_width=900, momentum=True, max_features=59)
             s = mlp.score(x_test, y_test)
             if best_conf_matrix[4] < s:
                 best_conf_matrix = [hidden_layer_width, momentum, i, conf_mat, s]
-            val_acc_features.append(s)
+            val_acc_features.append(s)				# 5x2cv scores
 
-        print("Mean score for feature: " + str(i) +
-              " " + str(np.mean(val_acc_features)) + "\n")
+        print("Mean score for " + str(i) + " features: " +
+              str(np.mean(val_acc_features)) + "\n")
+        scores.append(np.mean(val_acc_features))
+    feature_cnt = list(range(1, max_features + 1))
+    fig, ax = plt.subplots()
+    ax.bar(feature_cnt, scores)
+    ax.set_title("Width: " + str(hidden_layer_width) + " Momentum: " + str(momentum))
+    ax.set_xlabel('Feature Count')
+    ax.set_ylabel('Mean Score')
+    ax.set_xlim([0, max_features + 1])
+    ax.set_ylim([0, 1])
+    plt.savefig("W_" + str(hidden_layer_width) + "_M_" + str(momentum) + ".png")
 
 if __name__ == "__main__":
     main()
