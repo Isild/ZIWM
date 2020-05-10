@@ -14,7 +14,11 @@ def main():
     x, y = load_data()
     result = feature_selection(x, y)
     new_list = result[1]
-    max_features = int(sys.argv[1])
+    if len(sys.argv) > 1:
+        max_features = int(sys.argv[1])
+    else:
+        max_features = 59
+    print(max_features)
     if (max_features > 59 or max_features < 1):
         raise ValueError("Must check for at least one feature and max 59")
 
