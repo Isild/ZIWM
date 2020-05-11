@@ -27,8 +27,8 @@ def main():
         for row_num, data in enumerate(new_list):
             worksheet.write_row(row_num, 0, data)
 
-    layer_widths = [200, 800 ,1400]
-    momentum_coef = [0, 0.75, 0.9, 0.95]
+    layer_widths = [200, 800, 1400]
+    momentum_coef = [0, 0.35, 0.65, 0.95]
     feature_cnt = list(range(1, max_features + 1))
     for width in layer_widths:
         print("Hidden layer width: " + str(width))
@@ -52,8 +52,12 @@ def main():
         plt.xlim([0, max_features + 1])
         plt.ylim([0, 1])
         plt.grid(True)
+        plt.grid(which='both')
+        plt.grid(which='minor', alpha=0.2)
+        plt.grid(which='major', alpha=0.5)
         plt.legend()
         plt.savefig("W_" + str(width) + ".png")
+        plt.clf()
 
 
     print("SUMMARY\n------------------------------------------")
