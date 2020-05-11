@@ -8,7 +8,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.neural_network import MLPClassifier
 
-best_conf_matrix = [0, False, 0, np.ndarray, 0]
+best_conf_matrix = [0, False, 0, 0, np.ndarray, 0]
 
 def main():
     x, y = load_data()
@@ -30,9 +30,14 @@ def main():
     layer_widths = [200, 800, 1400]
     momentum_coef = [0, 0.35, 0.65, 0.95]
     feature_cnt = list(range(1, max_features + 1))
+    workbook = xlsxwriter.Workbook('scores.xlsx')
     for width in layer_widths:
         print("Hidden layer width: " + str(width))
         scores = []
+        worksheet = workbook.add_worksheet("W" + str(width))
+        worksheet.write(0, 0, "Feature Count")
+        worksheet.write_column(1, 0, feature_cnt)
+        col = 1
         for mc in momentum_coef:
             print("Momentum coefficient: " + str(mc))
             if (mc == 0):
@@ -43,8 +48,11 @@ def main():
                 print("Momentum: " + str(True))
                 scores = train_evaluate(x, y, width, True, mc, max_features)
                 data_label = "M: " + str(mc)
+            worksheet.write(0, col, "M: " + str(mc))
+            worksheet.write_column(1, col, scores)
             plt.plot(feature_cnt, scores, label=data_label,
                      linewidth=1, marker='o', markersize=5)
+            col += 1
 
         plt.title("Hidden layer width: " + str(width))
         plt.xlabel('Feature Count')
@@ -58,14 +66,16 @@ def main():
         plt.legend()
         plt.savefig("W_" + str(width) + ".png")
         plt.clf()
+    workbook.close()
 
 
     print("SUMMARY\n------------------------------------------")
     print("Hidden layer width: " + str(best_conf_matrix[0]) + "\nMomentum: " +
-          str(best_conf_matrix[1]) + "\nFeatures number: " + str(best_conf_matrix[2]))
+          str(best_conf_matrix[1]) + "\n Momentum coef: " + str(best_conf_matrix[2]) +
+          "\nFeatures number: " + str(best_conf_matrix[3]))
     print("Confusion matrix: ")
-    print(best_conf_matrix[3])
-    print("Score: " + str(best_conf_matrix[4]))
+    print(best_conf_matrix[4])
+    print("Score: " + str(best_conf_matrix[5]))
 
 def load_data():
     fileNames = ['ang_prct_2.txt', 'ang_prect.txt', 'inne.txt',
@@ -174,8 +184,9 @@ def train_evaluate(x, y, hidden_layer_width=900, momentum=True, momentum_coef=0.
             prediction = mlp.predict(x_test)
             conf_mat = confusion_matrix(y_test, prediction)
             s = mlp.score(x_test, y_test)
-            if best_conf_matrix[4] < s:
-                best_conf_matrix = [hidden_layer_width, momentum, i, conf_mat, s]
+            if best_conf_matrix[5] < s:
+                best_conf_matrix = [hidden_layer_width, momentum,
+				    momentum_coef, i, conf_mat, s]
             val_acc_features.append(s)				# 5x2cv scores
 
         print("Mean score for " + str(i) + " features: " +
