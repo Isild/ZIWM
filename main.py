@@ -18,7 +18,6 @@ def main():
         max_features = int(sys.argv[1])
     else:
         max_features = 59
-    print(max_features)
     if (max_features > 59 or max_features < 1):
         raise ValueError("Must check for at least one feature and max 59")
 
@@ -68,14 +67,18 @@ def main():
         plt.clf()
     workbook.close()
 
+    summaries = "Hidden layer width: " + str(best_conf_matrix[0]) + \
+                "\nMomentum: " + str(best_conf_matrix[1]) + \
+                "\nMomentum coef: " + str(best_conf_matrix[2]) + \
+                "\nFeatures number: " + str(best_conf_matrix[3]) + \
+                "\nConfusion matrix:\n" + str(best_conf_matrix[4]) + \
+                "\nScore: " + str(best_conf_matrix[5])
+    print("SUMMARY\n-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_")
+    print(summaries)
+    summary = open("summary.txt","w+")
+    summary.write(summaries)
+    summary.close()
 
-    print("SUMMARY\n------------------------------------------")
-    print("Hidden layer width: " + str(best_conf_matrix[0]) + "\nMomentum: " +
-          str(best_conf_matrix[1]) + "\n Momentum coef: " + str(best_conf_matrix[2]) +
-          "\nFeatures number: " + str(best_conf_matrix[3]))
-    print("Confusion matrix: ")
-    print(best_conf_matrix[4])
-    print("Score: " + str(best_conf_matrix[5]))
 
 def load_data():
     fileNames = ['ang_prct_2.txt', 'ang_prect.txt', 'inne.txt',
