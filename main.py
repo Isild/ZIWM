@@ -27,13 +27,35 @@ def main():
         for row_num, data in enumerate(new_list):
             worksheet.write_row(row_num, 0, data)
 
-    layer_widths = [10, 50, 100, 200, 500, 1000, 1500, 5000]
-    momentum = [False, True]
+    layer_widths = [200, 800 ,1400]
+    momentum_coef = [0, 0.75, 0.9, 0.95]
+    feature_cnt = list(range(1, max_features + 1))
     for width in layer_widths:
         print("Hidden layer width: " + str(width))
-        for m in momentum:
-            print("Momentum: " + str(m))
-            train_evaluate(x, y, width, m, max_features)
+        scores = []
+        for mc in momentum_coef:
+            print("Momentum coefficient: " + str(mc))
+            if (mc == 0):
+                print("Momentum: " + str(False))
+                scores = train_evaluate(x, y, width, False, mc, max_features)
+                data_label = "M: NO"
+            else:
+                print("Momentum: " + str(True))
+                scores = train_evaluate(x, y, width, True, mc, max_features)
+                data_label = "M: " + str(mc)
+            plt.plot(feature_cnt, scores, label=data_label,
+                     linewidth=1, marker='o', markersize=5)
+
+        plt.title("Hidden layer width: " + str(width))
+        plt.xlabel('Feature Count')
+        plt.ylabel('Mean Score')
+        plt.xlim([0, max_features + 1])
+        plt.ylim([0, 1])
+        plt.grid(True)
+        plt.legend()
+        plt.savefig("W_" + str(width) + ".png")
+
+
     print("SUMMARY\n------------------------------------------")
     print("Hidden layer width: " + str(best_conf_matrix[0]) + "\nMomentum: " +
           str(best_conf_matrix[1]) + "\nFeatures number: " + str(best_conf_matrix[2]))
@@ -119,7 +141,7 @@ def feature_selection(x, y, n_best=59):
     print("Selected", len(scores), "features")
     return fit_x, scores
 
-def train_evaluate(x, y, hidden_layer_width=900, momentum=True, max_features=59):
+def train_evaluate(x, y, hidden_layer_width=900, momentum=True, momentum_coef=0.9, max_features=59):
     # test first 1, 2 ... 'max_features' best features
     scores = []
     for i in range(1, max_features + 1):
@@ -129,7 +151,8 @@ def train_evaluate(x, y, hidden_layer_width=900, momentum=True, max_features=59)
         if momentum:
             mlp = MLPClassifier(hidden_layer_sizes=(hidden_layer_width,),
                                 max_iter=1000, nesterovs_momentum=True,
-                                solver='sgd', verbose=False, random_state=1)
+                                solver='sgd', verbose=False, random_state=1,
+                                momentum=momentum_coef)
         else:
             mlp = MLPClassifier(hidden_layer_sizes=(hidden_layer_width,),
                                 max_iter=1000, solver='sgd', verbose=False,
@@ -154,15 +177,7 @@ def train_evaluate(x, y, hidden_layer_width=900, momentum=True, max_features=59)
         print("Mean score for " + str(i) + " features: " +
               str(np.mean(val_acc_features)) + "\n")
         scores.append(np.mean(val_acc_features))
-    feature_cnt = list(range(1, max_features + 1))
-    fig, ax = plt.subplots()
-    ax.bar(feature_cnt, scores)
-    ax.set_title("Width: " + str(hidden_layer_width) + " Momentum: " + str(momentum))
-    ax.set_xlabel('Feature Count')
-    ax.set_ylabel('Mean Score')
-    ax.set_xlim([0, max_features + 1])
-    ax.set_ylim([0, 1])
-    plt.savefig("W_" + str(hidden_layer_width) + "_M_" + str(momentum) + ".png")
+    return scores
 
 if __name__ == "__main__":
     main()
