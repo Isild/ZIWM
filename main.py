@@ -29,11 +29,11 @@ def main():
     layer_widths = [200, 800, 1400]
     momentum_coef = [0, 0.35, 0.65, 0.95]
     feature_cnt = list(range(1, max_features + 1))
-    workbook = xlsxwriter.Workbook('scores.xlsx')
     for width in layer_widths:
         print("Hidden layer width: " + str(width))
         scores = []
-        worksheet = workbook.add_worksheet("W" + str(width))
+        workbook = xlsxwriter.Workbook("scores" + str(width) + ".xlsx")
+        worksheet = workbook.add_worksheet()
         worksheet.write(0, 0, "Feature Count")
         worksheet.write_column(1, 0, feature_cnt)
         col = 1
@@ -63,9 +63,9 @@ def main():
         plt.grid(which='minor', alpha=0.2)
         plt.grid(which='major', alpha=0.5)
         plt.legend()
-        plt.savefig("W_" + str(width) + ".png")
+        plt.savefig("W_" + str(width) + ".png", dpi=600)
         plt.clf()
-    workbook.close()
+        workbook.close()
 
     summaries = "Hidden layer width: " + str(best_conf_matrix[0]) + \
                 "\nMomentum: " + str(best_conf_matrix[1]) + \
