@@ -57,7 +57,7 @@ def main():
         plt.xlabel('Feature Count')
         plt.ylabel('Mean Score')
         plt.xlim([0, max_features + 1])
-        plt.ylim([0, 1])
+        plt.ylim([0, 100])
         plt.grid(True)
         plt.grid(which='both')
         plt.grid(which='minor', alpha=0.2)
@@ -151,12 +151,17 @@ def feature_selection(x, y, n_best=59):
     selector = feat_select.SelectKBest(score_func=feat_select.chi2, k=n_best)
     fit = selector.fit(x, y)
     fit_x = selector.transform(x)
-    scores = []
+    scores_all = []
+    scores_sel = []
+
+    for j in range(len(fit.scores_)):
+        scores_all.append(1 / fit.scores_[j])
+    scores_all.sort(reverse=True)
     for j in range(n_best):
-        scores.append([j, fit.scores_[j]])
-    scores = sorted(scores, key=lambda item: item[1], reverse=True)
-    print("Selected", len(scores), "features")
-    return fit_x, scores
+        scores_sel.append([j, scores_all[j]])
+
+    print("Selected", len(scores_sel), "features")
+    return fit_x, scores_sel
 
 def train_evaluate(x, y, hidden_layer_width=900, momentum=True, momentum_coef=0.9, max_features=59):
     # test first 1, 2 ... 'max_features' best features
@@ -192,9 +197,10 @@ def train_evaluate(x, y, hidden_layer_width=900, momentum=True, momentum_coef=0.
 				    momentum_coef, i, conf_mat, s]
             val_acc_features.append(s)				# 5x2cv scores
 
+        mean_score = np.mean(val_acc_features) * 100
         print("Mean score for " + str(i) + " features: " +
-              str(np.mean(val_acc_features)) + "\n")
-        scores.append(np.mean(val_acc_features))
+              str(mean_score) + "\n")
+        scores.append(mean_score)
     return scores
 
 if __name__ == "__main__":
